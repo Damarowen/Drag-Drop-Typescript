@@ -1,3 +1,57 @@
+
+//* Validation parameter
+interface Validate {
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+}
+
+function isValid(validatableInput: Validate) {
+  let isValid = true;
+
+  //* no blank space
+  if (validatableInput.required) {
+    isValid = isValid && validatableInput.value.toString().trim().length !== 0;
+  }
+
+  //* set limt no string value
+  if (
+    validatableInput.minLength != null &&
+    typeof validatableInput.value === 'string'
+  ) {
+    isValid = isValid && validatableInput.value.length >= validatableInput.minLength;
+  }
+
+  //* set limit to string valuee
+  if (
+    validatableInput.maxLength != null &&
+    typeof validatableInput.value === 'string'
+  ) {
+    isValid = isValid && validatableInput.value.length <= validatableInput.maxLength;
+    console.log(isValid, ' max length')
+  }
+  //* set limit to number value
+  if (
+    validatableInput.min != null &&
+    typeof validatableInput.value === 'number'
+  ) {
+    isValid = isValid && validatableInput.value >= validatableInput.min;
+  }
+  //* set limit to string value
+  if (
+    validatableInput.max != null &&
+    typeof validatableInput.value === 'number'
+  ) {
+    isValid = isValid && validatableInput.value <= validatableInput.max;
+  }
+  return isValid;
+}
+
+
+
 class ProjectInput {
   //*properties
   templateElement: HTMLTemplateElement;
@@ -40,19 +94,38 @@ class ProjectInput {
     const description = this.descriptionInputElement.value;
     const people = this.peopleInputElement.value;
 
-    if (title.trim().length === 0 || description.trim().length === 0 || people.trim().length === 0) {
+    const titleValidatable: Validate = {
+      value: title,
+      required: true
+    };
+    const descriptionValidatable: Validate = {
+      value: description,
+      required: true,
+      minLength: 5
+    };
+    const peopleValidatable: Validate = {
+      value: +people,
+      required: true,
+      min: 1,
+      max: 5
+    };
+
+    if (
+      isValid(titleValidatable) &&
+      isValid(descriptionValidatable) &&
+      isValid(peopleValidatable)
+
+    ) {
+      console.log('succeed')
+      return [title, description, +people]
+    } else {
       alert('error')
       return
-    } else {
-      
-      console.log(title,description,people)
-      return [title, description, +people]
     }
-
   }
 
 
-  private clearInput(){
+  private clearInput() {
     this.element.reset();
   }
 
