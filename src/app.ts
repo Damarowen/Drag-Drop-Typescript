@@ -1,7 +1,6 @@
 // Drag & Drop Interfaces
 interface Draggable {
   dragStartHandler(event: DragEvent): void;
-  dragEndHandler(event: DragEvent): void;
 }
 
 interface DragTarget {
@@ -13,8 +12,8 @@ interface DragTarget {
 
 // Project Type
 enum ProjectStatus {
-  Active,
-  Finished
+  Active = 'ACTIVE',
+  Finished = 'FINISHED'
 }
 
 //* class Project base
@@ -201,17 +200,15 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements 
   }
 
   dragStartHandler(event: DragEvent) {
+    
     event.dataTransfer!.setData('text/plain', this.project.id);
     event.dataTransfer!.effectAllowed = 'move';
   }
 
-  dragEndHandler(e: DragEvent) {
-    console.log('DragEnd');
-  }
+
 
   configure() {
     this.element.addEventListener('dragstart', this.dragStartHandler.bind(this));
-    this.element.addEventListener('dragend', this.dragEndHandler.bind(this));
   }
 
   renderContent() {
@@ -221,10 +218,10 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements 
   }
 }
 
+
 // ProjectList Class
-class ProjectList extends Component<HTMLDivElement, HTMLElement>
-  implements DragTarget {
-  assignedProjects: Project[];
+class ProjectList extends Component<HTMLDivElement, HTMLElement> implements DragTarget {
+ assignedProjects: Project[];
 
   constructor(private type: 'active' | 'finished') {
     super('project-list', 'app', false, `${type}-projects`);
@@ -283,6 +280,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>
     const listEl = document.getElementById(
       `${this.type}-projects-list`
     )! as HTMLUListElement;
+    
     listEl.innerHTML = '';
     
     //* this is listner function
